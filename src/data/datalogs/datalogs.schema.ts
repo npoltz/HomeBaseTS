@@ -7,8 +7,8 @@ const DataLogSchema = new Schema({
     },
     SensorId: String,
     Timestamp: {
-        type: Date,
-        default: new Date()
+        type: [Number],
+
     },
     Temperature: Number,
     RelativeHumidity: Number

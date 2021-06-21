@@ -3,7 +3,7 @@ import { Document, Model } from "mongoose";
 export interface IDataLog {
     Id: string;
     SensorId: string;
-    Timestamp: Date;
+    Timestamp: number[];
     Temperature: number;
     RelativeHumidity: number;
 }

@@ -1,15 +1,31 @@
 import * as express from "express";
+import { IDataLogDocument } from "../data/datalogs/datalogs.types";
 import { connect, disconnect } from "../data/database"
 
 export const register = ( app: express.Application ): void => {
-    app.get('/v1/sensors/:sensorId/datalogs?:sinceDateTime', async (req, res) => {
+
+    app.get('/v1/sensors/:sensorId/datalogs', async (req, res) => {
         const sensorId: string = req.params.sensorId;
-        const sinceDateTime: Date = new Date(req.params.sinceDateTime);
+        
+        let sinceTimeTicks: number | undefined;
+        if(req.query.sinceDateTime){
+            const sinceDateTime = new Date(req.query.sinceDateTime.toString());
+            sinceTimeTicks = ((sinceDateTime.getTime() * 10000) + 621355968000000000)
+        }
+
         console.log(`Retrieving datalogs for sensor ID ${sensorId}`);
         const datalogModel = connect();
 
         try {
-            const datalogs = datalogModel.find({ $and: [ { SensorId: {$eq: sensorId} }, { Timestamp: {$gte: sinceDateTime || new Date("1900-01-01")} } ] });
+            let datalogs: IDataLogDocument[];
+
+            if(sinceTimeTicks){
+                datalogs = await datalogModel.find({$and: [{SensorId: {$eq: sensorId}}, {Timestamp: {$gte: sinceTimeTicks}}] });
+            }
+            else{
+                datalogs = await datalogModel.find({SensorId: {$eq: sensorId}});
+            }
+
             return res.json( datalogs );
         } catch ( err ) {
             console.error(err);
@@ -25,7 +41,7 @@ export const register = ( app: express.Application ): void => {
         const db = connect();
 
         try {
-            db.create(req.body);
+            await db.create(req.body);
             return res.end();
         } catch ( err ) {
             console.error(err);

@@ -5,24 +5,25 @@ import { IDataLogModel } from "./datalogs/datalogs.types";
 let database: mongoose.Connection;
 
 export const connect = (): IDataLogModel => {
-    let uri: string;
-
-    if(process.env.DATABASE_URI){
-        uri = process.env.DATABASE_URI;
-    }
-    else{
-        throw new Error("Database URI not specified.")
-    }
 
     if (database) {
         return DataLogModel;
     }
+    
+    if(!process.env.DATABASE_URI){
+        throw new Error("Database URI not specified.")
+    }
 
-    mongoose.connect(uri, {
+    if(!process.env.DATABASE_NAME){
+        throw new Error("Database name not specified.")
+    }
+
+    mongoose.connect(process.env.DATABASE_URI,{
         useNewUrlParser: true,
         useFindAndModify: true,
         useUnifiedTopology: true,
         useCreateIndex: true,
+        dbName: process.env.DATABASE_NAME
     });
 
     database = mongoose.connection;
