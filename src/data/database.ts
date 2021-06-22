@@ -29,11 +29,11 @@ export const connect = (): IDataLogModel => {
     database = mongoose.connection;
 
     database.once("open", async () => {
-        console.log("Connected to database");
+        console.log("Connected to database.");
     });
 
     database.on("error", () => {
-        console.log("Error connecting to database");
+        console.log("Error connecting to database.");
     });
 
     return DataLogModel;
@@ -41,10 +41,10 @@ export const connect = (): IDataLogModel => {
 
 export const disconnect = (): void => {
     if (!database) {
-        console.log("Database already disconnected");
+        console.log("Database already disconnected.");
         return;
     }
     mongoose.disconnect();
-    console.log("Database disconnected");
+    console.log("Database disconnected.");
 
 };
