@@ -1,5 +1,5 @@
 import { Schema, Types } from "mongoose";
-import { convertDateTimeOffsetToDate, getDateTimeInTicks } from "../../helpers/date-time-helper";
+import { convertDateTimeOffsetToDate } from "../../helpers/date-time-helper";
 
 const DataLogSchema = new Schema({
     Id: {
@@ -7,10 +7,7 @@ const DataLogSchema = new Schema({
         default: Types.ObjectId()
     },
     SensorId: String,
-    Timestamp: {
-        type: [Number],
-        default: getDateTimeInTicks()
-    },
+    Timestamp: [Number],
     Temperature: Number,
     RelativeHumidity: Number
 },

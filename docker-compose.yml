@@ -9,7 +9,7 @@ services:
     environment:
       NODE_ENV: production
     env_file:
-      - .env
+      - .env.production
     ports:
       - 8080:8080
     links:
