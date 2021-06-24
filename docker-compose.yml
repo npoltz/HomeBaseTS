@@ -1,24 +1,26 @@
 version: '3.9'
 
 services:
-#   homebase.api:
-#     image: ${DOCKER_REGISTRY-}homebasetsapi
-#     build:
-#       context: .
-#       dockerfile: HomeBaseTs.Api/Dockerfile
-#     network_mode: bridge
-#     ports:
-#         - "80"
-#     links:
-#         - "db"
+  homebase.ts.api:
+    image: homebase.ts.api
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    environment:
+      NODE_ENV: production
+    env_file:
+      - .env
+    ports:
+      - 8080:8080
+    links:
+        - "db"
+      
   db:
     image: mongo
-    volumes:
-        - db-data:/data/db
-    container_name: "mongo-01"
-    network_mode: bridge
     ports:
         - "27017:27017"
+    volumes:
+        - db-data:/data/db
 
 volumes:
    db-data:

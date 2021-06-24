@@ -18,6 +18,8 @@ export const connect = (): IDataLogModel => {
         throw new Error("Database name not specified.")
     }
 
+    console.log(`Connecting to ${process.env.DATABASE_URI}`);
+
     mongoose.connect(process.env.DATABASE_URI,{
         useNewUrlParser: true,
         useFindAndModify: true,

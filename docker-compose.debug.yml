@@ -1,0 +1,25 @@
+version: '3.9'
+
+services:
+  homebase.ts.api:
+    image: homebase.ts.api
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    environment:
+      NODE_ENV: development
+    ports:
+      - 8080:8080
+      - 9229:9229
+    command: ["node", "--inspect=0.0.0.0:9229", "dist/index.js"]
+      
+    db:
+      image: mongo
+      volumes:
+          - db-data:/data/db
+      ports:
+          - "27017:27017"
+  
+  volumes:
+     db-data:
+      external: true
