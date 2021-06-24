@@ -12,3 +12,7 @@ export const convertDateToTicks = (datetime: string | undefined): number => {
     const sinceDateTime = new Date(datetime);
     return ((sinceDateTime.getTime() * 10000) + epochUtcTicks);
 }
+
+export const getDateTimeInTicks = (): number[] => {
+    return [((Date.now() * 10000) + epochUtcTicks), 0]
+}

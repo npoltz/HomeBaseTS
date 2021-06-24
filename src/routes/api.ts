@@ -50,7 +50,9 @@ export const register = ( app: express.Application ): void => {
     app.post('/v1/sensors/:sensorId/datalogs', async (req, res) => {
         const datalogModel = connect();
 
-        console.log(`Creating datalog: ${req.body}`);
+        console.log(`Creating datalog: ${JSON.stringify(req.body)}`);
+
+        const { SensorId , Temperature, RelativeHumidity} = req.body;
 
         try {
             await datalogModel.create(req.body);

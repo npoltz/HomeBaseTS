@@ -6,6 +6,8 @@ dotenv.config();
 const port = process.env.SERVER_PORT;
 
 const app = express();
+app.use(express.json());
+app.use(express.urlencoded({extended: true}));
 routes.register(app);
 
 app.listen( port, () => {
