@@ -1,13 +1,11 @@
 import mongoose from "mongoose";
-import { DataLogModel } from "./datalogs/datalogs.model";
-import { IDataLogModel } from "./datalogs/datalogs.types";
 
 let database: mongoose.Connection;
 
-export const connect = (): IDataLogModel => {
+export const connect = (): void => {
 
-    if (database) {
-        return DataLogModel;
+    if (database && (database.readyState === 1 || database.readyState === 2)) {
+        return;
     }
     
     if(!process.env.DATABASE_URI){
@@ -37,12 +35,10 @@ export const connect = (): IDataLogModel => {
     database.on("error", () => {
         console.log("Error connecting to database.");
     });
-
-    return DataLogModel;
 };
 
 export const disconnect = (): void => {
-    if (!database) {
+    if (!database || database.readyState != 1) {
         console.log("Database already disconnected.");
         return;
     }

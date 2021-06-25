@@ -1,5 +1,5 @@
 import { Schema, Types } from "mongoose";
-import { convertDateTimeOffsetToDate } from "../../helpers/date-time-helper";
+import { convertTicksToDate } from "../../helpers/date-time-helper";
 
 const DataLogSchema = new Schema({
     Id: {
@@ -16,7 +16,7 @@ const DataLogSchema = new Schema({
         transform: function(doc, ret){
             ret.Id = ret._id;
             delete ret._id;
-            ret.Timestamp = convertDateTimeOffsetToDate(doc.Timestamp);
+            ret.Timestamp = convertTicksToDate(doc.Timestamp);
             return ret;
         }
     }
