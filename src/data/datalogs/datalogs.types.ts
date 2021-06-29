@@ -1,7 +1,6 @@
 import { Document, Model } from "mongoose";
 
 export interface IDataLog {
-    Id: string;
     SensorId: string;
     Timestamp: number[];
     Temperature: number;
