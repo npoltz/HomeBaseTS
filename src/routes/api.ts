@@ -40,7 +40,7 @@ export const register = ( app: express.Application ): void => {
             return res.json(datalogs);
         } catch (err) {
             console.error(err);
-            res.json( { error: err.message || err } );
+            return res.status(500).json( { error: err.message || err } );
         }
         finally{
             disconnect();
@@ -64,7 +64,7 @@ export const register = ( app: express.Application ): void => {
             return res.json(datalog);
         } catch (err) {
             console.error(err);
-            res.json( { error: err.message || err } );
+            return res.status(500).json( { error: err.message || err } );
         }
         finally{
             disconnect();
@@ -73,11 +73,10 @@ export const register = ( app: express.Application ): void => {
 
     app.get('/v1', async (req, res) => {
         try {
-            res.send("Hello World!");
-            return res.end();
+            return res.send("Hello World!");
         } catch ( err ) {
             console.error(err);
-            res.json( { error: err.message || err } );
+            return res.status(500).json( { error: err.message || err } );
         }
     });
 };
