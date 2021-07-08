@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html>
+<%- include('./partials/head.ejs') %>
+
+<script src="/scripts/moment.min.js"></script>
+<script src="/scripts/Chart.min.js"></script>
+<script src="/scripts/jquery.min.js"></script>
+
+<body>
+    <%- include('./partials/nav.ejs') %>
+
+    <h1>Humidor Sensor</h1>
+    <div>
+        <div class="sensor-label">
+            <img src="/images/time_48dp.png" width="24" height="24" />
+            <h4>Last Updated: </h4><label id="lastUpdated"><%= lastUpdated %></label>
+        </div>
+        <div class="sensor-label">
+            <img src="/images/temperature_48dp.png" width="24" height="24" />
+            <h4>Temperature: </h4><label id="temperature"><%= latestTemp %></label>
+            <img src="/images/humidity_48dp.png" width="24" height="24" style="margin-left:20px" />
+            <h4>Relative Humidity: </h4><label id="humidity"><%= latestHumidity %></label>
+        </div>
+    </div>
+        
+    <div class="sensor-graph content">
+        <input type="button"
+               class="button"
+               value="Raw"
+               onclick="setPeriodInterval(0)" />
+        <input type="button"
+               class="button"
+               value="Day"
+               onclick="setPeriodInterval(1)" />
+        <input type="button"
+               class="button"
+               value="Week"
+               onclick="setPeriodInterval(2)" />
+        <input type="button"
+               class="button"
+               value="Month"
+               onclick="setPeriodInterval(3)" />
+        <input type="button"
+               class="button"
+               value="Year"
+               onclick="setPeriodInterval(4)" />
+        <canvas id="myChart" style="margin:0" width="400" height="200"></canvas>
+        <script>
+            var chartCanvas = document.getElementById("myChart");
+    
+            var chartOptions = {
+                legend: {
+                    display: false,
+                    position: 'top',
+                    labels: {
+                        boxWidth: 80,
+                        fontColor: 'black'
+                    }
+                },
+                scales: {
+                    xAxes: [{
+                        type: "time",
+                        time: {
+                            unit: 'hour',
+                            unitStepSize: 10,
+                            round: 'minute',
+                            tooltipFormat: "YYYY-MM-DD hh:mm:ss a",
+                            displayFormats: {
+                                hour: 'MM-DD HH:mm'
+                            }
+                        }
+                    }],
+                    yAxes: [{
+                        scaleFontSize: 10,
+                        id: 'temperatureAxis',
+                        position: 'left',
+                        ticks: {
+                            suggestedMin: 0,
+                            suggestedMax: 40
+                        },
+                        scaleLabel: {
+                            display: true,
+                            labelString: "Temperature (°C)"
+                        }
+                    },
+                    {
+                        scaleFontSize: 10,
+                        id: 'humidityAxis',
+                        position: 'right',
+                        ticks: {
+                            suggestedMin: 0,
+                            suggestedMax: 100
+                        },
+                        scaleLabel: {
+                            display: true,
+                            labelString: "Relative Humidity (%)"
+                        }
+                    }]
+                }
+            };
+    
+            myChart = new Chart(chartCanvas, {
+                type: 'line',
+                options: chartOptions
+            });
+    
+            function updateSensorData(jsonSensorData) {
+                console.log(jsonSensorData);
+    
+                if (jsonSensorData == null) {
+                    myChart.data.datasets.pop();
+                    myChart.data.datasets.pop();
+                    myChart.update();
+                    return;
+                }
+    
+                var timeStampLabels = jsonSensorData.map(function (e) {
+                    return e.Timestamp;
+                });
+                var temperatureData = jsonSensorData.map(function (e) {
+                    return e.Temperature;
+                });
+                var humidityData = jsonSensorData.map(function (e) {
+                    return e.RelativeHumidity;
+                });
+    
+                var sensorData = {
+                    labels: timeStampLabels,
+                    datasets: [{
+                        borderColor: 'tomato',
+                        label: "Temperature",
+                        yAxisID: 'temperatureAxis',
+                        data: temperatureData,
+                        fill: false,
+                        pointRadius: 2
+                    },
+                    {
+                        borderColor: 'paleturquoise',
+                        label: "Humidity",
+                        yAxisID: 'humidityAxis',
+                        data: humidityData,
+                        fill: false,
+                        pointRadius: 2
+                    }]
+                };
+    
+                myChart.data = sensorData;
+                myChart.update();
+            }
+    
+            function setPeriodInterval(){
+                $.ajax({
+                    dataType: "json",
+                    url: "/v1/sensors/s01/datalogs",
+                    success: function (data) {
+                        updateSensorData(data);
+                    },
+                    error: function (error) {
+                        console.log("Error:");
+                        console.log(error);
+                        myChart.data.datasets.pop();
+                        myChart.data.datasets.pop();
+                        myChart.update();
+                    }
+                });
+            };
+    
+            setPeriodInterval();
+        </script>
+    </div>
+        
+    <%- include('./partials/footer.ejs') %>
+</body>
+</html>
