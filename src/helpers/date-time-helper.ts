@@ -18,7 +18,11 @@ export const getCurrentTimeInTicks = (): number[] => {
     return [((Date.now() * microOffset) + epochUtcTicks), 0]
 }
 
-export const convertTicksToSinceString = (dateTimeOffsetArray: number[], toDateTime: number): string => {
+export const convertTicksToSinceString = (dateTimeOffsetArray: number[] | undefined, toDateTime: number): string => {
+    if (!dateTimeOffsetArray) {
+        return 'never';
+    }
+
     const fromDateTime = (Math.trunc((dateTimeOffsetArray[0] + dateTimeOffsetArray[1])) - epochUtcTicks) / microOffset;
 
     const diffDays = getDifferenceInDays(fromDateTime, toDateTime);

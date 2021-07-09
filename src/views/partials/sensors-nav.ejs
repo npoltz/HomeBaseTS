@@ -1,0 +1,7 @@
+<nav>
+    <ul>
+        <% sensors.forEach(function(sensor){ %>
+          <li><a href=<%= '/sensor-data/' + sensor.SensorId %>><%= sensor.Name %></a></li>
+        <% }); %>
+      </ul>
+</nav>

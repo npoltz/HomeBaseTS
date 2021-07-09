@@ -2,51 +2,52 @@
 <html>
 <%- include('./partials/head.ejs') %>
 
-<script src="/scripts/moment.min.js"></script>
-<script src="/scripts/Chart.min.js"></script>
-<script src="/scripts/jquery.min.js"></script>
+<script src='/scripts/moment.min.js'></script>
+<script src='/scripts/Chart.min.js'></script>
+<script src='/scripts/jquery.min.js'></script>
 
 <body>
     <%- include('./partials/nav.ejs') %>
+    <%- include('./partials/sensors-nav.ejs') %>
 
-    <h1>Humidor Sensor</h1>
+    <h1><%= sensor.Name %></h1>
     <div>
-        <div class="sensor-label">
-            <img src="/images/time_48dp.png" width="24" height="24" />
-            <h4>Last Updated: </h4><label id="lastUpdated"><%= lastUpdated %></label>
+        <div class='sensor-label'>
+            <img src='/images/time_48dp.png' width='24' height='24' />
+            <h4>Last Updated: </h4><label id='lastUpdated'><%= lastUpdated %></label>
         </div>
-        <div class="sensor-label">
-            <img src="/images/temperature_48dp.png" width="24" height="24" />
-            <h4>Temperature: </h4><label id="temperature"><%= latestTemp %></label>
-            <img src="/images/humidity_48dp.png" width="24" height="24" style="margin-left:20px" />
-            <h4>Relative Humidity: </h4><label id="humidity"><%= latestHumidity %></label>
+        <div class='sensor-label'>
+            <img src='/images/temperature_48dp.png' width='24' height='24' />
+            <h4>Temperature: </h4><label id='temperature'><%= latestTemp %></label>
+            <img src='/images/humidity_48dp.png' width='24' height='24' style='margin-left:20px' />
+            <h4>Relative Humidity: </h4><label id='humidity'><%= latestHumidity %></label>
         </div>
     </div>
         
-    <div class="sensor-graph content">
-        <input type="button"
-               class="button"
-               value="Raw"
-               onclick="setPeriodInterval(0)" />
-        <input type="button"
-               class="button"
-               value="Day"
-               onclick="setPeriodInterval(1)" />
-        <input type="button"
-               class="button"
-               value="Week"
-               onclick="setPeriodInterval(2)" />
-        <input type="button"
-               class="button"
-               value="Month"
-               onclick="setPeriodInterval(3)" />
-        <input type="button"
-               class="button"
-               value="Year"
-               onclick="setPeriodInterval(4)" />
-        <canvas id="myChart" style="margin:0" width="400" height="200"></canvas>
+    <div class='sensor-graph content'>
+        <input type='button'
+               class='button'
+               value='Raw'
+               onclick='setPeriodInterval(0)' />
+        <input type='button'
+               class='button'
+               value='Day'
+               onclick='setPeriodInterval(1)' />
+        <input type='button'
+               class='button'
+               value='Week'
+               onclick='setPeriodInterval(2)' />
+        <input type='button'
+               class='button'
+               value='Month'
+               onclick='setPeriodInterval(3)' />
+        <input type='button'
+               class='button'
+               value='Year'
+               onclick='setPeriodInterval(4)' />
+        <canvas id='myChart' style='margin:0' width='400' height='200'></canvas>
         <script>
-            var chartCanvas = document.getElementById("myChart");
+            var chartCanvas = document.getElementById('myChart');
     
             var chartOptions = {
                 legend: {
@@ -59,12 +60,12 @@
                 },
                 scales: {
                     xAxes: [{
-                        type: "time",
+                        type: 'time',
                         time: {
                             unit: 'hour',
                             unitStepSize: 10,
                             round: 'minute',
-                            tooltipFormat: "YYYY-MM-DD hh:mm:ss a",
+                            tooltipFormat: 'YYYY-MM-DD hh:mm:ss a',
                             displayFormats: {
                                 hour: 'MM-DD HH:mm'
                             }
@@ -80,7 +81,7 @@
                         },
                         scaleLabel: {
                             display: true,
-                            labelString: "Temperature (°C)"
+                            labelString: 'Temperature (°C)'
                         }
                     },
                     {
@@ -93,7 +94,7 @@
                         },
                         scaleLabel: {
                             display: true,
-                            labelString: "Relative Humidity (%)"
+                            labelString: 'Relative Humidity (%)'
                         }
                     }]
                 }
@@ -128,7 +129,7 @@
                     labels: timeStampLabels,
                     datasets: [{
                         borderColor: 'tomato',
-                        label: "Temperature",
+                        label: 'Temperature',
                         yAxisID: 'temperatureAxis',
                         data: temperatureData,
                         fill: false,
@@ -136,7 +137,7 @@
                     },
                     {
                         borderColor: 'paleturquoise',
-                        label: "Humidity",
+                        label: 'Humidity',
                         yAxisID: 'humidityAxis',
                         data: humidityData,
                         fill: false,
@@ -150,13 +151,13 @@
     
             function setPeriodInterval(){
                 $.ajax({
-                    dataType: "json",
-                    url: "/v1/sensors/s01/datalogs",
+                    dataType: 'json',
+                    url: '/v1/sensors/'+ '<%= sensor.SensorId %>' + '/datalogs',
                     success: function (data) {
                         updateSensorData(data);
                     },
                     error: function (error) {
-                        console.log("Error:");
+                        console.log('Error:');
                         console.log(error);
                         myChart.data.datasets.pop();
                         myChart.data.datasets.pop();

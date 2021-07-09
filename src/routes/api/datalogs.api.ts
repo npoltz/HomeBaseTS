@@ -1,8 +1,7 @@
 import * as express from "express";
-import { DataLogModel } from "../data/datalogs/datalogs.model";
-import { IDataLogDocument } from "../data/datalogs/datalogs.types";
-import { connect, disconnect } from "../data/database"
-import { convertDateToTicks, getCurrentTimeInTicks } from "../helpers/date-time-helper";
+import { DataLogModel } from "../../data/datalogs/datalogs.model";
+import { IDataLogDocument } from "../../data/datalogs/datalogs.types";
+import { convertDateToTicks, getCurrentTimeInTicks } from "../../helpers/date-time-helper";
 
 export const register = ( app: express.Application ): void => {
 
@@ -12,7 +11,6 @@ export const register = ( app: express.Application ): void => {
         console.log(`Retrieving datalogs for sensor ID ${sensorId}.`);
 
         try {
-            connect();
             let datalogs: IDataLogDocument[];
 
             if(req.query.sinceDateTime){
@@ -42,9 +40,6 @@ export const register = ( app: express.Application ): void => {
             console.error(err);
             return res.status(500).json( { error: err.message || err } );
         }
-        finally{
-            disconnect();
-        }
     });
 
     app.post('/v1/sensors/:sensorId/datalogs', async (req, res) => {
@@ -54,7 +49,6 @@ export const register = ( app: express.Application ): void => {
         console.log(`Creating datalog: ${JSON.stringify(req.body)}`);
 
         try {
-            connect();
             const datalog = await DataLogModel.create({
                 SensorId: sensorId,
                 Temperature: Temperature,
@@ -63,18 +57,6 @@ export const register = ( app: express.Application ): void => {
             });
             return res.json(datalog);
         } catch (err) {
-            console.error(err);
-            return res.status(500).json( { error: err.message || err } );
-        }
-        finally{
-            disconnect();
-        }
-    });
-
-    app.get('/v1', async (req, res) => {
-        try {
-            return res.send("Hello World!");
-        } catch ( err ) {
             console.error(err);
             return res.status(500).json( { error: err.message || err } );
         }
